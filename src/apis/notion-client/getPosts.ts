@@ -17,14 +17,12 @@ export const getPosts = async () => {
     console.log('Fetching posts for page ID:', id)
     const api = new NotionAPI()
     const response = await api.getPage(id)
-    const response = await api.getPage(id)
     id = idToUuid(id)
     const collection = Object.values(response.collection)[0]?.value
     const block = response.block
     const schema = collection?.schema
     const rawMetadata = block[id].value
-    const rawMetadata = block[id].value
-    // Check Type
+
     // Check Type
     if (
       rawMetadata?.type !== "collection_view_page" &&
@@ -46,18 +44,17 @@ export const getPosts = async () => {
           ).toString()
           properties.fullWidth =
             (block[id].value?.format as any)?.page_full_width ?? false
-    // Sort by date
           data.push(properties)
         }
       }
-      const dateB: any = new Date(b?.date?.start_date || b.createdTime)
+
       // Sort by date
       data.sort((a: any, b: any) => {
         const dateA: any = new Date(a?.date?.start_date || a.createdTime)
         const dateB: any = new Date(b?.date?.start_date || b.createdTime)
         return dateB - dateA
       })
-}
+
       console.log('Total posts fetched:', data.length)
       const posts = data as TPosts
       return posts
