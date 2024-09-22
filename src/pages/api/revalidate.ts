@@ -18,15 +18,31 @@ export default async function handler(
   try {
     if (path) {
       await res.revalidate(path as string)
+      console.log(`Successfully revalidated path: ${path}`)
     } else {
       const posts = await getPosts()
-      const revalidatePromises = posts.map(post => res.revalidate(`/${post.slug}`))
-      await Promise.all(revalidatePromises)
+      console.log(`Revalidating ${posts.length} posts`)
+      const batchSize = 10 // 每批处理的页面数量
+      for (let i = 0; i < posts.length; i += batchSize) {
+        const batch = posts.slice(i, i + batchSize)
+        const results = await Promise.allSettled(
+          batch.map(async (post) => {
+            try {
+              await res.revalidate(`/${post.slug}`)
+              return `Successfully revalidated: /${post.slug}`
+            } catch (error) {
+              return `Failed to revalidate: /${post.slug}`
+            }
+          })
+        )
+        console.log(`Batch ${i / batchSize + 1} results:`, results)
+      }
       await res.revalidate("/")
     }
 
-    return res.json({ revalidated: true })
+    return res.json({ revalidated: true, message: "Revalidation complete" })
   } catch (err) {
+    console.error('Error during revalidation:', err)
     return res.status(500).json({ message: "Error revalidating", error: err instanceof Error ? err.message : String(err) })
   }
 }
