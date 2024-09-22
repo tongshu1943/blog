@@ -27,9 +27,14 @@ export default async function handler(
     } else {
       const posts = await getPosts()
       console.log('Posts fetched:', posts.length)
-      const revalidateRequests = posts.map((row) =>
-        res.revalidate(`/${row.slug}`)
-      )
+      const revalidateRequests = posts.map(async (row) => {
+        try {
+          await res.revalidate(`/${row.slug}`)
+          console.log(`Successfully revalidated: /${row.slug}`)
+        } catch (error) {
+          console.error(`Failed to revalidate: /${row.slug}`, error)
+        }
+      })
       await Promise.all(revalidateRequests)
       await res.revalidate("/")
     }

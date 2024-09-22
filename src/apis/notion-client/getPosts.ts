@@ -14,6 +14,7 @@ import { TPosts } from "src/types"
 export const getPosts = async () => {
   try {
     let id = CONFIG.notionConfig.pageId as string
+    console.log('Fetching posts for page ID:', id)
     const api = new NotionAPI()
 
     const response = await api.getPage(id)
@@ -29,10 +30,12 @@ export const getPosts = async () => {
       rawMetadata?.type !== "collection_view_page" &&
       rawMetadata?.type !== "collection_view"
     ) {
+      console.log('Invalid page type, returning empty array')
       return []
     } else {
       // Construct Data
       const pageIds = getAllPageIds(response)
+      console.log('Total page IDs:', pageIds.length)
       const data = []
       for (let i = 0; i < pageIds.length; i++) {
         const id = pageIds[i]
@@ -55,6 +58,7 @@ export const getPosts = async () => {
         return dateB - dateA
       })
 
+      console.log('Total posts fetched:', data.length)
       const posts = data as TPosts
       return posts
     }
