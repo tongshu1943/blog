@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { getPosts } from "../../apis"
+import { CONFIG } from "site.config"
 
 // for all path revalidate, https://<your-site.com>/api/revalidate?secret=<token>
 // for specific path revalidate, https://<your-site.com>/api/revalidate?secret=<token>&path=<path>
@@ -8,21 +9,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { secret, path } = req.query
-  if (secret !== process.env.TOKEN_FOR_REVALIDATE) {
+  const { secret } = req.query
+  if (secret !== CONFIG.revalidateSecret) {
     return res.status(401).json({ message: "Invalid token" })
   }
 
   try {
-    if (path && typeof path === "string") {
-      await res.revalidate(path)
-    } else {
-      const posts = await getPosts()
-      const revalidateRequests = posts.map((row) =>
-        res.revalidate(`/${row.slug}`)
-      )
-      await Promise.all(revalidateRequests)
-    }
+    const posts = await getPosts()
+    const revalidateRequests = posts.map((row) =>
+      res.revalidate(`/${row.slug}`)
+    )
+    await Promise.all(revalidateRequests)
+    await res.revalidate("/")
 
     res.json({ revalidated: true })
   } catch (err) {
