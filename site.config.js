@@ -4,7 +4,7 @@ const CONFIG = {
     name: "CHEN Juntong",
     image: "/avatar.svg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "Product Owner, AI Engineer",
-    bio: "时来天地皆同力，运去英雄不自由",
+    bio: "时来天地皆同力 \n 运去英雄不自由",
     email: "i@chenjuntong.com",
     linkedin: "chenjuntong",
     github: "tongshu1943",

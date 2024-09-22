@@ -19,7 +19,14 @@ const ProfileCard: React.FC<Props> = () => {
         <div className="mid">
           <div className=" name">{CONFIG.profile.name}</div>
           <div className="role">{CONFIG.profile.role}</div>
-          <div className="text-sm mb-2">{CONFIG.profile.bio}</div>
+          <div className="bio">
+            {CONFIG.profile.bio.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                {index < CONFIG.profile.bio.split('\n').length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </StyledWrapper>
