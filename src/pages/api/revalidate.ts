@@ -10,38 +10,23 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { secret, path } = req.query
-  console.log('Received secret:', secret)
-  console.log('Received path:', path)
-  console.log('Config secret:', CONFIG.revalidateSecret)
 
   if (secret !== CONFIG.revalidateSecret) {
-    console.log('Invalid token')
     return res.status(401).json({ message: "Invalid token" })
   }
 
   try {
-    console.log('Starting revalidation process')
     if (path) {
-      console.log(`Revalidating path: ${path}`)
       await res.revalidate(path as string)
     } else {
       const posts = await getPosts()
-      console.log('Posts fetched:', posts.length)
-      for (const post of posts) {
-        try {
-          await res.revalidate(`/${post.slug}`)
-          console.log(`Successfully revalidated: /${post.slug}`)
-        } catch (error) {
-          console.error(`Failed to revalidate: /${post.slug}`, error)
-        }
-      }
+      const revalidatePromises = posts.map(post => res.revalidate(`/${post.slug}`))
+      await Promise.all(revalidatePromises)
       await res.revalidate("/")
     }
 
-    console.log('Revalidation successful')
-    res.json({ revalidated: true })
+    return res.json({ revalidated: true })
   } catch (err) {
-    console.error('Error during revalidation:', err)
     return res.status(500).json({ message: "Error revalidating", error: err instanceof Error ? err.message : String(err) })
   }
 }
