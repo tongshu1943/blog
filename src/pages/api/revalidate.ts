@@ -9,8 +9,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { secret } = req.query
+  const { secret, path } = req.query
   console.log('Received secret:', secret)
+  console.log('Received path:', path)
   console.log('Config secret:', CONFIG.revalidateSecret)
 
   if (secret !== CONFIG.revalidateSecret) {
@@ -20,13 +21,18 @@ export default async function handler(
 
   try {
     console.log('Starting revalidation process')
-    const posts = await getPosts()
-    console.log('Posts fetched:', posts.length)
-    const revalidateRequests = posts.map((row) =>
-      res.revalidate(`/${row.slug}`)
-    )
-    await Promise.all(revalidateRequests)
-    await res.revalidate("/")
+    if (path) {
+      console.log(`Revalidating path: ${path}`)
+      await res.revalidate(path as string)
+    } else {
+      const posts = await getPosts()
+      console.log('Posts fetched:', posts.length)
+      const revalidateRequests = posts.map((row) =>
+        res.revalidate(`/${row.slug}`)
+      )
+      await Promise.all(revalidateRequests)
+      await res.revalidate("/")
+    }
 
     console.log('Revalidation successful')
     res.json({ revalidated: true })
