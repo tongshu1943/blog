@@ -12,8 +12,8 @@ const CONFIG = {
   },
   projects: [
     {
-      name: `morethan-log`,
-      href: "https://github.com/morethanmin/morethan-log",
+      name: `璇玑智算(命理 AI)`,
+      href: "https://xuanjizhisuan.com",
     },
   ],
   // blog setting (required)
