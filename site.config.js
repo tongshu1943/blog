@@ -18,7 +18,7 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "兰亭序",
+    title: "陈老师的兰亭序",
     description: "无关风月，我题序等你回",
     scheme: "system", // 'light' | 'dark' | 'system'
   },
