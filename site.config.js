@@ -13,7 +13,7 @@ const CONFIG = {
   projects: [
     {
       name: `璇玑智算(命理 AI)`,
-      href: "https://xuanjizhisuan.com",
+      href: "https://www.xuanjizhisuan.com",
     },
   ],
   // blog setting (required)
